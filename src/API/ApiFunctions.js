@@ -1,6 +1,6 @@
 // API Routes
-const loginRoute = "https://hackathon-backend-green.vercel.app/auth/login";
-const signupRoute = "https://hackathon-backend-green.vercel.app/auth/signup";
+const loginRoute = "https://hackathon-backend-main.vercel.app/auth/login";
+const signupRoute = "https://hackathon-backend-main.vercel.app/auth/signup";
 
 /**
  * Sign in with email and password
