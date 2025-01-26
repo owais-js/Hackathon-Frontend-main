@@ -1,6 +1,6 @@
 const signupRoute = "http://hackathon-backend-main.vercel.app/auth/signup";
-const loginRoute = "https://hackathon-backend-main.vercel.app/auth/login";
-const registerroute = "https://hackathon-backend-main.vercel.app/auth/register";
+const loginRoute = "http://hackathon-backend-main.vercel.app/auth/login";
+const registerroute = "http://hackathon-backend-main.vercel.app/auth/register";
 /**
  * Sign in with email and password
  * @param {string} email - The email address of the user.  
