@@ -18,7 +18,7 @@ const Header = () => {
         <Button color="inherit" onClick={() => navigate('/home')}>Home</Button>
         <Button color="inherit" onClick={() => navigate('/admin')}>Admin Dashboard</Button>
         <Button color="inherit" onClick={() => navigate('/user')}>User Dashboard</Button>
-        <Button color="inherit" onClick={() => navigate('/loginform')}>Login</Button>
+        <Button color="inherit" onClick={() => navigate('/login')}>Login</Button>
       </Toolbar>
     </AppBar>
   );
