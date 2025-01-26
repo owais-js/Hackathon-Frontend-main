@@ -17,9 +17,11 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Paper,
 } from "@mui/material";
+import { RegisterWithDetails, RegisterWithEmailAndPassword } from "../API/ApiFunctions";
 
-const LandingPage = () => {
+const Home = () => {
     const loanCategories = [
         {
             title: "Wedding Loans",
@@ -47,7 +49,6 @@ const LandingPage = () => {
         },
     ];
 
-    // State for loan calculator
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedSubcategory, setSelectedSubcategory] = useState("");
     const [loanAmount, setLoanAmount] = useState("");
@@ -55,15 +56,12 @@ const LandingPage = () => {
     const [initialDeposit, setInitialDeposit] = useState("");
     const [installment, setInstallment] = useState(null);
     const [error, setError] = useState("");
-
-    // State for Modal
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
     const [cnic, setCnic] = useState("");
     const [email, setEmail] = useState("");
     const [formError, setFormError] = useState("");
 
-    // Calculate Monthly Installment
     const calculateInstallment = () => {
         if (!selectedCategory || !loanAmount || !loanPeriod || !initialDeposit || !selectedSubcategory) {
             setError("Please fill in all the fields.");
@@ -85,7 +83,7 @@ const LandingPage = () => {
         if (parseFloat(initialDeposit) >= parseFloat(loanAmount)) {
             setError("Initial deposit cannot be equal to or greater than the loan amount.");
             return;
-            }
+        }
 
         setError("");
         const adjustedLoanAmount = parseFloat(loanAmount) - parseFloat(initialDeposit);
@@ -93,12 +91,10 @@ const LandingPage = () => {
         setInstallment(monthlyInstallment);
     };
 
-    // Handle Proceed Button Click
     const handleProceed = () => {
-        setOpen(true); // Open the modal
+        setOpen(true);
     };
 
-    // Handle Modal Close
     const handleClose = () => {
         setOpen(false);
         setName("");
@@ -107,7 +103,6 @@ const LandingPage = () => {
         setFormError("");
     };
 
-    // Handle Submit in Modal
     const handleSubmit = () => {
         if (!name || !cnic || !email) {
             setFormError("All fields are required.");
@@ -130,42 +125,45 @@ const LandingPage = () => {
         }
 
         setFormError("");
-        alert("Details submitted successfully!");
+        setSelectedCategory("");
+        setSelectedSubcategory("");
+        setLoanAmount("");
+        setInitialDeposit("");
+        setLoanAmount("");
         handleClose();
     };
 
     return (
-        <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: 6 }}>
+        <Box sx={{ bgcolor: "#f0f4f8", minHeight: "100vh", py: 6, fontFamily: "'Poppins', sans-serif" }}>
             <Container>
-                {/* Header */}
-                <Box textAlign="center" mb={6}>
-                    <Typography variant="h3" fontWeight="bold" color="primary" gutterBottom>
+                <Paper elevation={4} sx={{ p: 4, mb: 6, background: "linear-gradient(135deg, #6e7dff, #f0f0f0)" }}>
+                    <Typography variant="h3" textAlign="center" fontWeight="bold" color="primary" gutterBottom>
                         Saylani Microfinance App
                     </Typography>
-                    <Typography variant="subtitle1" color="textSecondary">
+                    <Typography variant="subtitle1" textAlign="center" color="textSecondary">
                         Empowering you through interest-free loans
                     </Typography>
-                </Box>
+                </Paper>
 
-                {/* Loan Categories */}
-                <Grid container spacing={4}>
+                <Grid container spacing={4} mb={6}>
                     {loanCategories.map((category, index) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                        <Grid item xs={12} sm={6} md={4} key={index}>
                             <Card
                                 sx={{
-                                    boxShadow: 3,
+                                    p: 2,
                                     transition: "transform 0.3s, box-shadow 0.3s",
                                     "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+                                    backgroundColor: "#ffffff",
                                 }}
                             >
                                 <CardContent>
-                                    <Typography variant="h5" fontWeight="bold" color="secondary" gutterBottom>
+                                    <Typography variant="h5" fontWeight="bold" color="#00bfae" gutterBottom>
                                         {category.title}
                                     </Typography>
-                                    <Typography variant="body1" color="textPrimary" mt={2}>
-                                        <strong>Maximum Loan:</strong> PKR {category.maxLoan.toLocaleString()}
+                                    <Typography>
+                                        <strong>Max Loan:</strong> PKR {category.maxLoan.toLocaleString()}
                                     </Typography>
-                                    <Typography variant="body1" color="textPrimary" mb={2}>
+                                    <Typography>
                                         <strong>Loan Period:</strong> {category.period} years
                                     </Typography>
                                 </CardContent>
@@ -174,40 +172,32 @@ const LandingPage = () => {
                     ))}
                 </Grid>
 
-                {/* Loan Calculator */}
-                <Box mt={8} p={4} borderRadius={2} boxShadow={3} bgcolor="white">
-                    <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom textAlign="center">
+                <Box sx={{ p: 4, boxShadow: 3, borderRadius: 2, bgcolor: "white" }}>
+                    <Typography variant="h4" textAlign="center" fontWeight="bold" color="primary" gutterBottom>
                         Loan Calculator
                     </Typography>
                     <Divider sx={{ my: 3 }} />
                     <Grid container spacing={3}>
-                        {/* Loan Category Selector */}
                         <Grid item xs={12} sm={6}>
                             <FormControl fullWidth>
                                 <InputLabel>Select Loan Category</InputLabel>
                                 <Select
                                     value={selectedCategory}
-                                    onChange={(e) => {
-                                        const selected = loanCategories.find((cat) => cat.title === e.target.value);
-                                        setSelectedCategory(selected.title);
-                                        setSelectedSubcategory("");
-                                        setLoanPeriod("");
-                                        setLoanAmount("");
-                                        setInitialDeposit("");
-                                        setError("");
-                                    }}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
                                     label="Select Loan Category"
+                                    sx={{
+                                        borderColor: "#00bfae",
+                                        backgroundColor: "#f0f4f8",
+                                    }}
                                 >
-                                    {loanCategories.map((category, index) => (
-                                        <MenuItem key={index} value={category.title}>
-                                            {category.title}
+                                    {loanCategories.map((cat, index) => (
+                                        <MenuItem value={cat.title} key={index}>
+                                            {cat.title}
                                         </MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
                         </Grid>
-
-                        {/* Subcategory Selector */}
                         <Grid item xs={12} sm={6}>
                             <FormControl fullWidth>
                                 <InputLabel>Select Subcategory</InputLabel>
@@ -216,120 +206,104 @@ const LandingPage = () => {
                                     onChange={(e) => setSelectedSubcategory(e.target.value)}
                                     label="Select Subcategory"
                                     disabled={!selectedCategory}
+                                    sx={{
+                                        borderColor: "#00bfae",
+                                        backgroundColor: "#f0f4f8",
+                                    }}
                                 >
                                     {selectedCategory &&
                                         loanCategories
                                             .find((cat) => cat.title === selectedCategory)
-                                            .subcategories.map((subcat, index) => (
-                                                <MenuItem key={index} value={subcat}>
-                                                    {subcat}
+                                            .subcategories.map((sub, index) => (
+                                                <MenuItem value={sub} key={index}>
+                                                    {sub}
                                                 </MenuItem>
                                             ))}
                                 </Select>
                             </FormControl>
                         </Grid>
-
-                        {/* Loan Amount Input */}
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Loan Amount (PKR)"
+                                label="Loan Amount"
                                 type="number"
                                 value={loanAmount}
-                                onChange={(e) => {
-                                    const amount = e.target.value;
-                                    setLoanAmount(amount);
-                                    const selected = loanCategories.find((cat) => cat.title === selectedCategory);
-                                    if (amount > selected.maxLoan) {
-                                        setError(`Loan amount cannot exceed PKR ${selected.maxLoan.toLocaleString()}`);
-                                    } else {
-                                        setError("");
-                                    }
-                                }}
-                                variant="outlined"
+                                onChange={(e) => setLoanAmount(e.target.value)}
                                 disabled={!selectedCategory}
+                                sx={{
+                                    backgroundColor: "#f0f4f8",
+                                }}
                             />
                         </Grid>
-
-                        {/* Initial Deposit Input */}
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
-                                label="Initial Deposit (PKR)"
+                                label="Initial Deposit"
                                 type="number"
                                 value={initialDeposit}
                                 onChange={(e) => setInitialDeposit(e.target.value)}
-                                variant="outlined"
                                 disabled={!selectedCategory}
+                                sx={{
+                                    backgroundColor: "#f0f4f8",
+                                }}
                             />
                         </Grid>
-
-                        {/* Loan Period Input */}
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 fullWidth
                                 label="Loan Period (Years)"
                                 type="number"
                                 value={loanPeriod}
-                                onChange={(e) => {
-                                    const period = e.target.value;
-                                    setLoanPeriod(period);
-                                    const selected = loanCategories.find((cat) => cat.title === selectedCategory);
-                                    if (period > selected.period) {
-                                        setError(`Loan period cannot exceed ${selected.period} years.`);
-                                    } else {
-                                        setError("");
-                                    }
-                                }}
-                                variant="outlined"
+                                onChange={(e) => setLoanPeriod(e.target.value)}
                                 disabled={!selectedCategory}
+                                sx={{
+                                    backgroundColor: "#f0f4f8",
+                                }}
                             />
                         </Grid>
-
-                        {/* Calculate Button */}
                         <Grid item xs={12} textAlign="center">
                             <Button
                                 variant="contained"
-                                color="primary"
+                                color="secondary"
                                 onClick={calculateInstallment}
-                                sx={{ px: 4, py: 1.5 }}
                                 disabled={!selectedCategory || !selectedSubcategory}
+                                sx={{
+                                    backgroundColor: "#ff5722",
+                                    ":hover": {
+                                        backgroundColor: "#ff3d00",
+                                    },
+                                }}
                             >
                                 Calculate
                             </Button>
                         </Grid>
                     </Grid>
 
-                    {/* Display Error or Installment */}
                     {error && (
-                        <Typography variant="body2" color="error" textAlign="center" mt={3}>
+                        <Typography color="error" textAlign="center" mt={2}>
                             {error}
                         </Typography>
                     )}
-                    {installment !== null && !error && (
-                        <>
-                            <Box mt={4} textAlign="center">
-                                <Typography variant="h6" color="secondary">
-                                    Your Monthly Installment: <strong>PKR {installment}</strong>
-                                </Typography>
-                            </Box>
-                            <Grid item xs={12} textAlign="center">
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    sx={{ px: 4, py: 1.5 }}
-                                    onClick={handleProceed}
-                                >
-                                    Proceed
-                                </Button>
-                            </Grid>
-                        </>
+
+                    {installment && !error && (
+                        <Box textAlign="center" mt={4}>
+                            <Typography variant="h6" color="secondary">
+                                Your Monthly Installment: <strong>PKR {installment}</strong>
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleProceed}
+                                sx={{ mt: 2 }}
+                            >
+                                Proceed
+                            </Button>
+                        </Box>
                     )}
                 </Box>
             </Container>
 
-            {/* Modal */}
-            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+            <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Enter Your Details</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -338,8 +312,8 @@ const LandingPage = () => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         margin="dense"
-                        error={!!formError && !/^[a-zA-Z\s]+$/.test(name)}
-                        helperText={formError && !/^[a-zA-Z\s]+$/.test(name) && "Name must only contain letters."}
+                        error={formError && !/^[a-zA-Z\s]+$/.test(name)}
+                        helperText={formError && !/^[a-zA-Z\s]+$/.test(name) ? "Invalid Name" : ""}
                     />
                     <TextField
                         fullWidth
@@ -347,8 +321,8 @@ const LandingPage = () => {
                         value={cnic}
                         onChange={(e) => setCnic(e.target.value)}
                         margin="dense"
-                        error={!!formError && !/^\d{13}$/.test(cnic)}
-                        helperText={formError && !/^\d{13}$/.test(cnic) && "CNIC must be 13 digits."}
+                        error={formError && !/^\d{13}$/.test(cnic)}
+                        helperText={formError && !/^\d{13}$/.test(cnic) ? "Invalid CNIC" : ""}
                     />
                     <TextField
                         fullWidth
@@ -357,22 +331,19 @@ const LandingPage = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         margin="dense"
-                        error={!!formError && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)}
-                        helperText={
-                            formError && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && "Please enter a valid email."
-                        }
+                        error={formError && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)}
+                        helperText={formError && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "Invalid Email" : ""}
                     />
-                    {formError && (
-                        <Typography variant="body2" color="error" mt={2}>
-                            {formError}
-                        </Typography>
-                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="secondary">
                         Cancel
                     </Button>
-                    <Button onClick={handleSubmit} color="primary" variant="contained">
+                    <Button onClick={() => {
+                        handleSubmit();
+                        RegisterWithDetails(name, cnic, email)
+                    }
+                    } color="primary">
                         Submit
                     </Button>
                 </DialogActions>
@@ -381,4 +352,4 @@ const LandingPage = () => {
     );
 };
 
-export default LandingPage;
+export default Home;
